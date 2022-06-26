@@ -34,16 +34,19 @@ const AlertWizard = () => {
   const [genericPostRequest, postResults] = useLazyGenericPostRequestQuery()
 
   const handleSubmit = async (values) => {
+    Object.keys(values).filter(function (x) {
+      if (values[x] === null) {
+        delete values[x]
+      }
+      return null
+    })
     values.selectedTenants.map(
       (tenant) => (values[`Select_${tenant.defaultDomainName}`] = tenant.defaultDomainName),
     )
     genericPostRequest({ path: '/api/AddAlert', values: values })
   }
 
-  const formValues = {
-    InstallAsSystem: true,
-    DisableRestart: true,
-  }
+  const formValues = {}
 
   return (
     <CippWizard
@@ -102,20 +105,19 @@ const AlertWizard = () => {
             label="Alert on users without any form of MFA"
           />
           <RFFCFormSwitch name="MFAAdmins" label="Alert on admins without any form of MFA" />
-          <RFFCFormSwitch name="NewGA" label="Alert on new Global Admins" />
           <RFFCFormSwitch name="NewRole" label="Alert on new users added to any admin role" />
           <RFFCFormSwitch name="AdminPassword" label="Alert on changed admin Passwords" />
-          <RFFCFormSwitch name="NewApprovedApp" label="Alert on new app consent" />
           <RFFCFormSwitch
             name="DefenderStatus"
-            label="Alert if Defender is not running (Tenant must be onboarded in Lighthouse)"
+            label="Alert if Defender is not running (Tenant must be on-boarded in Lighthouse)"
           />
           <RFFCFormSwitch
             name="DefenderMalware"
-            label="Alert on Defender Malware found  (Tenant must be onboarded in Lighthouse)"
+            label="Alert on Defender Malware found  (Tenant must be on-boarded in Lighthouse)"
           />
           <RFFCFormSwitch name="QuotaUsed" label="Alert on 90% mailbox quota used" />
           <RFFCFormSwitch name="UnusedLicenses" label="Alert on unused licenses" />
+          <RFFCFormSwitch name="AppSecretExpiry" label="Alert on expiring application secrets" />
         </CForm>
         <hr className="my-4" />
       </CippWizard.Page>
@@ -152,14 +154,6 @@ const AlertWizard = () => {
                           />
                         </CListGroupItem>
                         <CListGroupItem className="d-flex justify-content-between align-items-center">
-                          Alert on new Global Admins
-                          <FontAwesomeIcon
-                            color="#f77f00"
-                            size="lg"
-                            icon={props.values.NewGA ? faCheck : faTimes}
-                          />
-                        </CListGroupItem>
-                        <CListGroupItem className="d-flex justify-content-between align-items-center">
                           Alert on new users added to any admin role
                           <FontAwesomeIcon
                             color="#f77f00"
@@ -173,14 +167,6 @@ const AlertWizard = () => {
                             color="#f77f00"
                             size="lg"
                             icon={props.values.AdminPassword ? faCheck : faTimes}
-                          />
-                        </CListGroupItem>
-                        <CListGroupItem className="d-flex justify-content-between align-items-center">
-                          Alert on new app consent
-                          <FontAwesomeIcon
-                            color="#f77f00"
-                            size="lg"
-                            icon={props.values.NewApprovedApp ? faCheck : faTimes}
                           />
                         </CListGroupItem>
                         <CListGroupItem className="d-flex justify-content-between align-items-center">
@@ -213,6 +199,14 @@ const AlertWizard = () => {
                             color="#f77f00"
                             size="lg"
                             icon={props.values.UnusedLicenses ? faCheck : faTimes}
+                          />
+                        </CListGroupItem>
+                        <CListGroupItem className="d-flex justify-content-between align-items-center">
+                          Alert on expiring application secrets
+                          <FontAwesomeIcon
+                            color="#f77f00"
+                            size="lg"
+                            icon={props.values.AppSecretExpiry ? faCheck : faTimes}
                           />
                         </CListGroupItem>
                       </CListGroup>
